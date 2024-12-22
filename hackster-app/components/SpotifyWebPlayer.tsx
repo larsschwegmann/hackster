@@ -9,12 +9,14 @@ type SpotifyWebPlayerProps = {
     deviceId?: string,
     setDeviceId: (deviceId?: string) => void,
     hideUI: boolean
+    setSpotifyPlayer: (player) => void,
 }
 
 export default function SpotifyWebPlayer({
     deviceId,
     setDeviceId,
     hideUI,
+    setSpotifyPlayer,
 }: SpotifyWebPlayerProps) {
     const {data: sessionData} = useSession();
 
@@ -22,6 +24,10 @@ export default function SpotifyWebPlayer({
     const [isActive, setActive] = useState(false);
     const [player, setPlayer] = useState(undefined);
     const [currentTrack, setTrack] = useState(undefined);
+
+    useEffect(() => {
+        setSpotifyPlayer(player);
+    }, [player]);
 
     useEffect(() => {
         const script = document.createElement("script");
@@ -84,8 +90,8 @@ export default function SpotifyWebPlayer({
 
     if (!hideUI)  {
         return (
-            <div>
-                { isActive ? <button>{isPaused ? <Play/> : <Pause/>}</button> : null}            
+            <div className="flex justify-center">
+                { isActive ? <button className="btn btn-circle h-36 w-36">{isPaused ? <Play size={128}/> : <Pause size={128}/>}</button> : null}            
             </div>
         )
     } else {

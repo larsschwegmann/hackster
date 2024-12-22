@@ -42,7 +42,7 @@ export const histerPlaylists: HitsterOriginalPlaylist[] = [
 ]
 
 async function getPlaylistItems(playlist: HitsterOriginalPlaylist) {
-    const playlistId = spotifyPlaylistIdFromURL(playlist.spotifyURL)
+    const playlistId = spotifyPlaylistIdFromURL(playlist.spotifyURL);
     let items = [];
     let total = 0;
     let offset = 0;
@@ -56,6 +56,12 @@ async function getPlaylistItems(playlist: HitsterOriginalPlaylist) {
     return items;
 }
 
+async function getPlaylistItemAt(playlist: HitsterOriginalPlaylist, index: number) {
+    const playlistId = spotifyPlaylistIdFromURL(playlist.spotifyURL);
+    const items = (await sdk.playlists.getPlaylistItems(playlistId, undefined, undefined, 1, index)).items;
+    return items[0];
+}
+
 export async function decodeQRData(data: string) {
     // Check if spotify URI
     if (data.startsWith("spotify:track:")) {
@@ -67,9 +73,9 @@ export async function decodeQRData(data: string) {
         return data.match(playlist.playlistExtractionRegex)
     });
     if (playlistMatch) {
-        const items = await getPlaylistItems(playlistMatch);
+        //const items = await getPlaylistItems(playlistMatch);
         const index = parseInt(data.match(playlistMatch.playlistExtractionRegex)![1])
-        return items[index-1].track.uri;
+        return (await getPlaylistItemAt(playlistMatch, index-1)).track.uri;
     }
     console.error("Invalid QR Code");
 }

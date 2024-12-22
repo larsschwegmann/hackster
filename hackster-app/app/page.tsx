@@ -1,8 +1,8 @@
 "use client";
 import SpotifyWebPlayer from "@/components/SpotifyWebPlayer";
 import sdk from "@/lib/spotify-sdk/ClientInstance";
-import { useSession, signOut, signIn } from 'next-auth/react';
-import { spotifyURIFromURL, histerPlaylists, decodeQRData } from "@/lib/hacksterPlaylists";
+import { useSession } from 'next-auth/react';
+import { decodeQRData } from "@/lib/hacksterPlaylists";
 import SignIn from "@/components/ui/SignIn";
 import { useState, useEffect } from "react";
 import { ScanQrCode } from "lucide-react";
@@ -17,10 +17,14 @@ export default function Home() {
     const [selectedPlaybackDevice, setSelectedPlaybackDevice] = useState<Device | undefined>(undefined);
     const [availablePlaybackDevices, setAvailablePlaybackDevices] = useState<Device[]>([]);
 
+    // @ts-ignore
+    const [player, setPlayer] = useState(undefined);
+
     // Automatically Update Available Playback Devices + Default device when session or player changes
     useEffect(() => {
         if (!session || session.status !== "authenticated") {
             setAvailablePlaybackDevices([]);
+            return;
         }
         const devices = sdk.player.getAvailableDevices().then(devices => {
             setAvailablePlaybackDevices(devices.devices);    
@@ -39,8 +43,15 @@ export default function Home() {
             console.log("Want to play song: ", spotifyURI);
             if (selectedPlaybackDevice && spotifyURI) {
                 await sdk.player.startResumePlayback(selectedPlaybackDevice.id!, undefined, [spotifyURI]);
+                setScanning(false);
             }
         });
+    }
+
+    function openScanner() {
+        // @ts-ignore
+        player?.activateElement(); 
+        setScanning(true);
     }
 
 
@@ -56,8 +67,8 @@ export default function Home() {
       }}>Play a great song</button> */}
 
             { isScanning ? <div><QRScanner onDataScan={onDataScan} onCancel={() => setScanning(false)}/></div> : null}
-            <SpotifyWebPlayer deviceId={webPlayerDeviceId} setDeviceId={setWebPlayerDeviceId} hideUI={isScanning} />
-            { !isScanning ? <button className="btn btn-lg btn-primary mt-5" onClick={() => setScanning(true)}><ScanQrCode /> Scan New Track</button> : null }
+            <SpotifyWebPlayer deviceId={webPlayerDeviceId} setDeviceId={setWebPlayerDeviceId} hideUI={isScanning} setSpotifyPlayer={setPlayer} />
+            { !isScanning ? <button className="btn btn-lg btn-primary mt-5" onClick={openScanner}><ScanQrCode /> Scan New Track</button> : null }
             <div>
                 <span className="mr-3">Playback Device:</span>
                 <select className="select select-bordered select-sm" value={webPlayerDeviceId} onChange={(e) => setWebPlayerDeviceId(e.target.value)}>
