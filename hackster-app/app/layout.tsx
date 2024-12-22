@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import type { Viewport } from 'next'
 import { Nunito } from "next/font/google";
-import "./globals.css";
-
+import { Analytics } from "@vercel/analytics/react"
 import AuthSessionProvider from "@/components/AuthSessionProvider";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/api/auth/[...nextauth]/authOptions";
 import StatusBar from "@/components/ui/StatusBar";
+
+import "./globals.css";
+
 
 const nunito = Nunito({ subsets: ['latin'] })
 
@@ -36,6 +38,7 @@ export default async function RootLayout({
           <div className="flex h-screen justify-center items-center">
             {children}
           </div>
+          <Analytics/>
         </body>
       </AuthSessionProvider>
     </html>
