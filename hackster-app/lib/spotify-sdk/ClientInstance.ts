@@ -3,11 +3,9 @@
 import {
   AccessToken,
   IAuthStrategy,
-  SdkConfiguration,
   SdkOptions,
   SpotifyApi,
 } from "@spotify/web-api-ts-sdk";
-import { AuthUser } from "@/app/api/auth/[...nextauth]/authOptions"
 import { getSession, signIn } from "next-auth/react";
 
 /**
@@ -20,7 +18,7 @@ class NextAuthStrategy implements IAuthStrategy {
   }
 
   public async getAccessToken(): Promise<AccessToken> {
-    const session: any = await getSession();
+    const session = await getSession();
     if (!session) {
       return {} as AccessToken;
     }
@@ -30,7 +28,7 @@ class NextAuthStrategy implements IAuthStrategy {
       return this.getAccessToken();
     }
 
-    const { user }: { user: AuthUser } = session;
+    const { user } = session;
 
     return {
       access_token: user.access_token,
@@ -41,11 +39,11 @@ class NextAuthStrategy implements IAuthStrategy {
     } as AccessToken;
   }
 
-  public removeAccessToken(): void {
+  public removeAccessToken() {
     console.warn("[Spotify-SDK][WARN]\nremoveAccessToken not implemented");
   }
 
-  public setConfiguration(configuration: SdkConfiguration): void {
+  public setConfiguration() {
     console.warn("[Spotify-SDK][WARN]\nsetConfiguration not implemented");
   }
 }

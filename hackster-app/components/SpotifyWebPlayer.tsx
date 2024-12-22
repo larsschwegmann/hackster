@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use-client";
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
@@ -6,14 +5,13 @@ import { useSession } from "next-auth/react"
 import { Play, Pause } from "lucide-react";
 
 type SpotifyWebPlayerProps = {
-    deviceId?: string,
     setDeviceId: (deviceId?: string) => void,
     hideUI: boolean
+    // @ts-expect-error Spotify player has no types
     setSpotifyPlayer: (player) => void,
 }
 
 export default function SpotifyWebPlayer({
-    deviceId,
     setDeviceId,
     hideUI,
     setSpotifyPlayer,
@@ -22,12 +20,12 @@ export default function SpotifyWebPlayer({
 
     const [isPaused, setPaused] = useState(false);
     const [isActive, setActive] = useState(false);
-    const [player, setPlayer] = useState(undefined);
-    const [currentTrack, setTrack] = useState(undefined);
+    const [player, setPlayer] = useState<Spotify.Player | undefined>();
+    // const [currentTrack, setTrack] = useState(undefined);
 
     useEffect(() => {
         setSpotifyPlayer(player);
-    }, [player]);
+    }, [player, setSpotifyPlayer]);
 
     useEffect(() => {
         const script = document.createElement("script");
@@ -40,7 +38,8 @@ export default function SpotifyWebPlayer({
             console.log("Spotify Web Playback SDK is ready");
             const player = new window.Spotify.Player({
                 name: 'hackster',
-                getOAuthToken: cb => { cb(sessionData.user.access_token); },
+
+                getOAuthToken: cb => { cb(sessionData!.user.access_token); },
                 volume: 0.5
             });
 
@@ -74,24 +73,27 @@ export default function SpotifyWebPlayer({
                     return;
                 }
 
-                setTrack(state.track_window.current_track);
+                // setTrack(state.track_window.current_track);
                 setPaused(state.paused);
 
                 player.getCurrentState().then( state => { 
-                    (!state)? setActive(false) : setActive(true) 
+                    if (state) {
+                        setActive(true);
+                    } else {
+                        setActive(false);
+                    }
                 });
-
             }));
 
             player.connect();
 
         };        
-    }, [])
+    }, [sessionData, setDeviceId])
 
     if (!hideUI)  {
         return (
             <div className="flex justify-center">
-                { isActive ? <button className="btn btn-circle h-36 w-36" onClick={async () => player.togglePlay()}>{isPaused ? <Play size={128}/> : <Pause size={128}/>}</button> : null}            
+                { isActive ? <button className="btn btn-circle h-36 w-36" onClick={async () => player?.togglePlay()}>{isPaused ? <Play size={128}/> : <Pause size={128}/>}</button> : null}            
             </div>
         )
     } else {

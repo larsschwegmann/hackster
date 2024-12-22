@@ -1,17 +1,18 @@
 import spotifyProfile, { refreshAccessToken } from "./SpotifyProfile";
 import { Account, AuthOptions } from "next-auth";
 import { JWT } from "next-auth/jwt";
+import { Session } from "next-auth";
 
 export type AuthUser = {
-  name: string;
-  email: string;
-  image: string;
+  name?: string | null | undefined;
+  email?: string | null | undefined;
+  image?: string | null | undefined;
   access_token: string;
   token_type: string;
   expires_at: number;
   expires_in: number;
-  refresh_token: string;
-  scope: string;
+  refresh_token?: string;
+  scope?: string;
   id: string;
 };
 
@@ -22,7 +23,7 @@ const authOptions: AuthOptions = {
   },
   callbacks: {
     async jwt({ token, account }: { token: JWT; account: Account | null }) {
-      if (!account) {
+      if (!account || !account.access_token || !account.token_type) {
         return token;
       }
 
@@ -43,7 +44,7 @@ const authOptions: AuthOptions = {
 
       return updatedToken;
     },
-    async session({ session, token }: { session: any; token: any }) {
+    async session({ session, token }: { session: Session; token: JWT }) {
       const user: AuthUser = {
         ...session.user,
         access_token: token.access_token,

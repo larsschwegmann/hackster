@@ -1,32 +1,12 @@
-import { z } from "zod";
 import sdk from "@/lib/spotify-sdk/ClientInstance";
 
-const HacksterPlaylistSchema = z.object({
-    name: z.string(),
-    spotifyURL: z.string()
-})
-
-const HitsterOriginalPlaylistSchema = HacksterPlaylistSchema.extend({
-    playlistExtractionRegex: z.string()
-})
-
-export type HacksterPlaylist = z.infer<typeof HacksterPlaylistSchema>
-export type HitsterOriginalPlaylist = z.infer<typeof HitsterOriginalPlaylistSchema>
-
-function spotifyPlaylistIdFromURL(url: string): string {
-    const re = new RegExp("^https://open.spotify.com/playlist/([a-zA-Z0-9]+)")
-    const result = url.match(re)
-    if (!result) {
-        throw new Error("Invalid Spotify URL")
-    }
-    return result[1]
+export type HacksterPlaylist = {
+    name: string,
+    spotifyURL: string
 }
-
-function spotifyPlaylistURIFromID(id: string): string {
-    return `spotify:playlist:${id}`
+export type HitsterOriginalPlaylist = HacksterPlaylist & {
+    playlistExtractionRegex: string
 }
-
-
 
 export const histerPlaylists: HitsterOriginalPlaylist[] = [
     {
@@ -41,20 +21,15 @@ export const histerPlaylists: HitsterOriginalPlaylist[] = [
     }
 ]
 
-async function getPlaylistItems(playlist: HitsterOriginalPlaylist) {
-    const playlistId = spotifyPlaylistIdFromURL(playlist.spotifyURL);
-    let items = [];
-    let total = 0;
-    let offset = 0;
-    do {
-        const page = await sdk.playlists.getPlaylistItems(playlistId, undefined, undefined, 50, offset);
-        total = page.total;
-        items.push(...page.items);
-        offset += page.limit;
-    } while (items.length < total)
-    
-    return items;
+function spotifyPlaylistIdFromURL(url: string): string {
+    const re = new RegExp("^https://open.spotify.com/playlist/([a-zA-Z0-9]+)")
+    const result = url.match(re)
+    if (!result) {
+        throw new Error("Invalid Spotify URL")
+    }
+    return result[1]
 }
+
 
 async function getPlaylistItemAt(playlist: HitsterOriginalPlaylist, index: number) {
     const playlistId = spotifyPlaylistIdFromURL(playlist.spotifyURL);
