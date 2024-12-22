@@ -33,7 +33,7 @@ export default async function RootLayout({
       <AuthSessionProvider session={session}>
         <body className={nunito.className}>
           <StatusBar/>
-          <div className="flex h-screen justify-center items-center px-6 py-10">
+          <div className="flex h-screen justify-center items-center">
             {children}
           </div>
         </body>

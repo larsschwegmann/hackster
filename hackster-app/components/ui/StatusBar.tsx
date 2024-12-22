@@ -10,9 +10,9 @@ export default function StatusBar() {
         return null;
     } else {
         return (
-            <div className="absolute top-2 w-full mx-3 h-8 flex items-center">
+            <div className="absolute top-2 w-full px-5 pt-5 h-8 flex items-center">
                 <span className="flex-grow">Logged in as {session.data.user?.name}</span>
-                <button className="btn btn-sm btn-accent btn-outline float-end mx-5" onClick={() => signOut()}><LogOut/> Sign Out</button>
+                <button className="btn btn-sm btn-accent btn-outline float-end" onClick={() => signOut()}><LogOut/> Sign Out</button>
             </div>
         )
     }
