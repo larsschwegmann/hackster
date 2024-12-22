@@ -91,7 +91,7 @@ export default function SpotifyWebPlayer({
     if (!hideUI)  {
         return (
             <div className="flex justify-center">
-                { isActive ? <button className="btn btn-circle h-36 w-36">{isPaused ? <Play size={128}/> : <Pause size={128}/>}</button> : null}            
+                { isActive ? <button className="btn btn-circle h-36 w-36" onClick={async () => player.togglePlay()}>{isPaused ? <Play size={128}/> : <Pause size={128}/>}</button> : null}            
             </div>
         )
     } else {
