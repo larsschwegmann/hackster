@@ -10,7 +10,6 @@ export type AuthUser = {
   access_token: string;
   token_type: string;
   expires_at: number;
-  expires_in: number;
   refresh_token?: string;
   scope?: string;
   id: string;
@@ -22,27 +21,45 @@ const authOptions: AuthOptions = {
     maxAge: 60 * 60, // 1hr
   },
   callbacks: {
-    async jwt({ token, account }: { token: JWT; account: Account | null }) {
-      if (!account || !account.access_token || !account.token_type) {
+    async jwt({ token, account, user }: { token: JWT; account: Account | null }) {
+      // if (!account || !account.access_token || !account.token_type) {
+      //   return token;
+      // }
+
+      // const updatedToken = {
+      //   ...token,
+      //   access_token: account?.access_token,
+      //   token_type: account?.token_type,
+      //   expires_at: account?.expires_at ?? Date.now() / 1000,
+      //   refresh_token: account?.refresh_token,
+      //   scope: account?.scope,
+      //   id: account?.providerAccountId,
+      // };
+
+      // if (Date.now() < updatedToken.expires_at) {
+      //   return refreshAccessToken(updatedToken);
+      // }
+
+      // return updatedToken;
+
+      if (account && user) {
+        return {
+          ...token,
+          access_token: account.access_token,
+          token_type: account.token_type,
+          expires_at: account.expires_at,
+          refresh_token: account.refresh_token,
+          scope: account.scope,
+          id: account.providerAccountId,
+        }
+      }
+
+      if (token.expires_at && Date.now() < token.expires_at) {
         return token;
       }
 
-      const updatedToken = {
-        ...token,
-        access_token: account?.access_token,
-        token_type: account?.token_type,
-        expires_at: account?.expires_at ?? Date.now() / 1000,
-        expires_in: (account?.expires_at ?? 0) - Date.now() / 1000,
-        refresh_token: account?.refresh_token,
-        scope: account?.scope,
-        id: account?.providerAccountId,
-      };
-
-      if (Date.now() < updatedToken.expires_at) {
-        return refreshAccessToken(updatedToken);
-      }
-
-      return updatedToken;
+      const refreshedToken = await refreshAccessToken(token);
+      return refreshedToken;
     },
     async session({ session, token }: { session: Session; token: JWT }) {
       const user: AuthUser = {
@@ -50,7 +67,6 @@ const authOptions: AuthOptions = {
         access_token: token.access_token,
         token_type: token.token_type,
         expires_at: token.expires_at,
-        expires_in: token.expires_in,
         refresh_token: token.refresh_token,
         scope: token.scope,
         id: token.id,

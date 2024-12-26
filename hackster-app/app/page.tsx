@@ -11,13 +11,19 @@ import QRScanner from "@/components/ui/QRScanner";
 
 export default function Home() {
 
+    /*
+    TODO: make player reconnect on idle timeout
+    TODO: refresh token on timeout
+    TODO: fix playback device selection
+    */
+
     const session = useSession();
     const [isScanning, setScanning] = useState(false);
     const [webPlayerDeviceId, setWebPlayerDeviceId] = useState<string | undefined>(undefined);
     const [selectedPlaybackDevice, setSelectedPlaybackDevice] = useState<Device | undefined>(undefined);
     const [availablePlaybackDevices, setAvailablePlaybackDevices] = useState<Device[]>([]);
 
-    const [player, setPlayer] = useState(undefined);
+    const [player, setPlayer] = useState<Spotify.Player | undefined>(undefined);
 
     // Automatically Update Available Playback Devices + Default device when session or player changes
     useEffect(() => {
@@ -38,33 +44,23 @@ export default function Home() {
     }
 
     function onDataScan(data: string)  {
+        setScanning(false);
         decodeQRData(data).then(async (spotifyURI) => {
-            console.log("Want to play song: ", spotifyURI);
+            console.log("Found QR track: ", spotifyURI);
             if (selectedPlaybackDevice && spotifyURI) {
                 await sdk.player.startResumePlayback(selectedPlaybackDevice.id!, undefined, [spotifyURI]);
-                setScanning(false);
             }
         });
     }
 
     function openScanner() {
-        // @ts-expect-error Spotify player has no types
         player?.activateElement(); 
         setScanning(true);
     }
 
 
     return (
-       
         <div className="grid grid-cols-1 gap-4">
-             {/* <button onClick={async () => {
-        const devices = await sdk.player.getAvailableDevices()
-        console.log(devices)
-        const device = devices.devices.find(device => device.name === "hackster")
-        console.log(spotifyURIFromURL(histerPlaylists[0].spotifyURL))
-        await sdk.player.startResumePlayback(device!.id!, spotifyURIFromURL(histerPlaylists[0].spotifyURL))
-      }}>Play a great song</button> */}
-
             { isScanning ? <div><QRScanner onDataScan={onDataScan} onCancel={() => setScanning(false)}/></div> : null}
             <SpotifyWebPlayer setDeviceId={setWebPlayerDeviceId} hideUI={isScanning} setSpotifyPlayer={setPlayer} />
             { !isScanning ? <button className="btn btn-lg btn-primary mt-5" onClick={openScanner}><ScanQrCode /> Scan New Track</button> : null }

@@ -7,8 +7,8 @@ import { Play, Pause } from "lucide-react";
 type SpotifyWebPlayerProps = {
     setDeviceId: (deviceId?: string) => void,
     hideUI: boolean
-    // @ts-expect-error Spotify player has no types
-    setSpotifyPlayer: (player) => void,
+    
+    setSpotifyPlayer: (player?: Spotify.Player) => void,
 }
 
 export default function SpotifyWebPlayer({
@@ -21,7 +21,6 @@ export default function SpotifyWebPlayer({
     const [isPaused, setPaused] = useState(false);
     const [isActive, setActive] = useState(false);
     const [player, setPlayer] = useState<Spotify.Player | undefined>();
-    // const [currentTrack, setTrack] = useState(undefined);
 
     useEffect(() => {
         setSpotifyPlayer(player);
@@ -35,10 +34,9 @@ export default function SpotifyWebPlayer({
         document.body.appendChild(script);
 
         window.onSpotifyWebPlaybackSDKReady = () => {
-            console.log("Spotify Web Playback SDK is ready");
+            console.log("[SpotifyPlayback] SDK is ready");
             const player = new window.Spotify.Player({
                 name: 'hackster',
-
                 getOAuthToken: cb => { cb(sessionData!.user.access_token); },
                 volume: 0.5
             });
@@ -46,13 +44,30 @@ export default function SpotifyWebPlayer({
             setPlayer(player);
 
             player.addListener('ready', ({ device_id }) => {
-                console.log('Ready with Device ID', device_id);
+                console.log('[SpotifyPlayback] Player ready with Device ID', device_id);
                 setDeviceId(device_id);
             });
 
             player.addListener('not_ready', ({ device_id }) => {
-                console.log('Device ID has gone offline', device_id);
+                console.log('[SpotifyPlayback] Device ID has gone offline', device_id);
                 setDeviceId(undefined);
+            });
+
+            player.addListener('player_state_changed', ( state => {
+                console.log("player state changed", state)
+                if (!state) {
+                    setActive(false);
+                    return;
+                } else {
+                    setActive(true);
+                }
+
+                setPaused(state.paused);
+                setActive(true);
+            }));
+
+            player.addListener('autoplay_failed', () => {
+                console.error("[SpotifyPlayback] autoplay failed");
             });
 
             player.addListener('initialization_error', ({ message }) => {
@@ -67,26 +82,11 @@ export default function SpotifyWebPlayer({
                 console.error(message);
             });
 
-            player.addListener('player_state_changed', ( state => {
-                console.log("player state changed", state)
-                if (!state) {
-                    return;
-                }
-
-                // setTrack(state.track_window.current_track);
-                setPaused(state.paused);
-
-                player.getCurrentState().then( state => { 
-                    if (state) {
-                        setActive(true);
-                    } else {
-                        setActive(false);
-                    }
-                });
-            }));
+            player.addListener('playback_error', ({ message }) => {
+                console.error(message);
+            });
 
             player.connect();
-
         };        
     }, [sessionData, setDeviceId])
 

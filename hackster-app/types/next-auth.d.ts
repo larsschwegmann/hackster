@@ -11,7 +11,6 @@ declare module "next-auth" {
             access_token: string
             token_type: string
             expires_at: number
-            expires_in: number
             refresh_token?: string
             scope?: string
             id: string
@@ -29,7 +28,6 @@ declare module "next-auth/jwt" {
         access_token: string
         token_type: string
         expires_at: number
-        expires_in: number
         refresh_token?: string
         scope?: string
         id: string
