@@ -54,7 +54,7 @@ export default function SpotifyWebPlayer({
             });
 
             player.addListener('player_state_changed', ( state => {
-                console.log("player state changed", state)
+                console.log("[SpotifyPlayback] player state changed", state)
                 if (!state) {
                     setActive(false);
                     return;

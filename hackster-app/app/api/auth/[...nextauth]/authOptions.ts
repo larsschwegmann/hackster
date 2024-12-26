@@ -1,7 +1,7 @@
 import spotifyProfile, { refreshAccessToken } from "./SpotifyProfile";
 import { Account, AuthOptions } from "next-auth";
 import { JWT } from "next-auth/jwt";
-import { Session } from "next-auth";
+import { Session, User } from "next-auth";
 
 export type AuthUser = {
   name?: string | null | undefined;
@@ -21,7 +21,7 @@ const authOptions: AuthOptions = {
     maxAge: 60 * 60, // 1hr
   },
   callbacks: {
-    async jwt({ token, account, user }: { token: JWT; account: Account | null }) {
+    async jwt({ token, account, user }: { token: JWT; account: Account | null, user: User }) {
       // if (!account || !account.access_token || !account.token_type) {
       //   return token;
       // }

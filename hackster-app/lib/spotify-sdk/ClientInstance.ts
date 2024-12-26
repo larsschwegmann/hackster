@@ -33,7 +33,6 @@ class NextAuthStrategy implements IAuthStrategy {
     return {
       access_token: user.access_token,
       token_type: "Bearer",
-      expires_in: user.expires_in,
       expires: user.expires_at,
       refresh_token: user.refresh_token,
     } as AccessToken;

@@ -15,6 +15,7 @@ export default function Home() {
     TODO: make player reconnect on idle timeout
     TODO: refresh token on timeout
     TODO: fix playback device selection
+    TODO: fix issue, when browser goes into background, page is refreshed and new player is created
     */
 
     const session = useSession();
