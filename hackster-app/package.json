@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@pdfme/common": "^5.2.11",
+    "@pdfme/generator": "^5.2.11",
     "@spotify/web-api-ts-sdk": "^1.2.0",
     "@vercel/analytics": "^1.4.1",
     "@yudiel/react-qr-scanner": "^2.1.0",
