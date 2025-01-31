@@ -31,12 +31,17 @@ export default function CardGeneratorPage() {
             const inputs = [];
             
             for (let k=0; k<chunks.length; k++) {
-                let page_inputs = {};
+                const page_inputs = {};
                 for (let i=0; i<chunks[k].length; i++) {
+                    // @ts-expect-error blah
                     page_inputs[`card${i+1}_qr`] = chunks[k][i].track.uri;
+                    // @ts-expect-error blah
                     page_inputs[`card${i+1}_title`] = chunks[k][i].track.name;
+                    // @ts-expect-error blah
                     page_inputs[`card${i+1}_artist`] = chunks[k][i].track.artists[0].name;
+                    // @ts-expect-error blah
                     page_inputs[`card${i+1}_year`] = chunks[k][i].track.album.release_date.split("-")[0];
+                    // @ts-expect-error blah
                     page_inputs[`card${i+1}_background`] = {color: colors[Math.floor(Math.random() * colors.length)]};
                 }
                 inputs.push(page_inputs);
@@ -44,6 +49,7 @@ export default function CardGeneratorPage() {
             console.log(inputs);
             const plugins = { text, rectangle, qrcode: barcodes.qrcode };
             generate({ template, inputs, plugins }).then((pdf) => {
+                // @ts-expect-error blah
                 const blob = new Blob([pdf.buffer], { type: 'application/pdf' });
                 window.open(URL.createObjectURL(blob));
             });
