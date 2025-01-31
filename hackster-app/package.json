@@ -11,9 +11,11 @@
   "dependencies": {
     "@pdfme/common": "^5.2.11",
     "@pdfme/generator": "^5.2.11",
+    "@pdfme/schemas": "^5.3.2",
     "@spotify/web-api-ts-sdk": "^1.2.0",
     "@vercel/analytics": "^1.4.1",
     "@yudiel/react-qr-scanner": "^2.1.0",
+    "lodash": "^4.17.21",
     "lucide-react": "^0.469.0",
     "next": "15.1.2",
     "next-auth": "^4.24.11",
@@ -24,6 +26,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/typography": "^0.5.15",
+    "@types/lodash": "^4.17.15",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
