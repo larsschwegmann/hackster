@@ -1,16 +1,13 @@
 "use client";
-import { Printer, FileSpreadsheet } from "lucide-react";
-import {useEffect, useState} from "react";
-import type { Template } from '@pdfme/common';
-import { generate } from '@pdfme/generator';
+import {FileSpreadsheet, Printer} from "lucide-react";
+import {useState} from "react";
+import type {Template} from '@pdfme/common';
+import {generate} from '@pdfme/generator';
 import cardTemplate from "@/lib/template_4x2_v2.json";
-import { text, rectangle, barcodes } from '@pdfme/schemas';
-import sdk from "@/lib/spotify-sdk/ClientInstance";
+import {barcodes, rectangle, text} from '@pdfme/schemas';
 import _ from "lodash";
-import { z } from "zod";
 import {getAllPlaylistItems} from "@/lib/utils";
 import {FileWithPath, useDropzone} from "react-dropzone";
-import {className} from "postcss-selector-parser";
 
 const colors = [
     "#e779c1",
@@ -82,7 +79,7 @@ async function generateCardSheetFromPlaylistTracks(playlist: PlaylistTrackType[]
 
 export default function CardGeneratorPage() {
     const [spotifyPlaylistURL, setSpotifyPlaylistURL] = useState<string>("");
-    const {acceptedFiles, getRootProps, getInputProps} = useDropzone({
+    const {getRootProps, getInputProps} = useDropzone({
         accept: {
             "text/tab-seperated-values": [".tsv"]
         },
