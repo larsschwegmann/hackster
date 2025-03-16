@@ -12,7 +12,7 @@ import {FileWithPath, useDropzone} from "react-dropzone";
 const colors = [
     "#e779c1",
     "#58c7f3",
-    "oklch(88.04% 0.206 93.72)",
+    "#ffd200",
     "#71ead2",
     "#ec8c78",
 ]
