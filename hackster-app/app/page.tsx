@@ -9,6 +9,7 @@ import { ScanQrCode } from "lucide-react";
 import { Device } from "@spotify/web-api-ts-sdk";
 import QRScanner from "@/components/ui/QRScanner";
 import SpotifyConnectPlayer from "@/components/SpotifyConnectPlayer";
+import {usePlayerStore} from "@/lib/playerStore";
 
 export default function Home() {
 
@@ -23,6 +24,7 @@ export default function Home() {
     const [isScanning, setScanning] = useState(false);
     const [webPlayerDeviceId, setWebPlayerDeviceId] = useState<string | undefined>(undefined);
     const [selectedPlaybackDevice, setSelectedPlaybackDevice] = useState<Device | undefined>(undefined);
+    const { selectedPlaybackDeviceId, setSelectedPlaybackDeviceId } = usePlayerStore();
     const [availablePlaybackDevices, setAvailablePlaybackDevices] = useState<Device[]>([]);
 
     const [player, setPlayer] = useState<Spotify.Player | undefined>(undefined);
@@ -36,9 +38,16 @@ export default function Home() {
         sdk.player.getAvailableDevices().then(devices => {
             setAvailablePlaybackDevices(devices.devices);    
             if (!selectedPlaybackDevice) {
-                setSelectedPlaybackDevice(devices.devices.find(device => device.id === webPlayerDeviceId));
+                if (selectedPlaybackDeviceId) {
+                    setSelectedPlaybackDevice(devices.devices.find(device => device.id === selectedPlaybackDeviceId));
+                } else {
+                    setSelectedPlaybackDevice(devices.devices.find(device => device.id === webPlayerDeviceId));
+                }
             }
         });
+        if (selectedPlaybackDevice?.id) {
+            setSelectedPlaybackDeviceId(selectedPlaybackDevice.id);
+        }
     }, [session, selectedPlaybackDevice, webPlayerDeviceId])
 
     if (!session || session.status !== "authenticated") {

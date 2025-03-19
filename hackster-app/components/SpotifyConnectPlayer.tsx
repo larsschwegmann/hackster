@@ -35,12 +35,10 @@ export default function SpotifyConnectPlayer({ hideUI, spotifyDeviceId }: Spotif
 
     if (!hideUI) {
         return (
-            <div>
-                <button className="btn btn-circle h-36 w-36" onClick={async () => isPlaying ? await pause() : await play()}>{!isPlaying ? <Play size={128}/> : <Pause size={128}/>}</button>
-            </div>
+            <button className="btn btn-circle h-36 w-36" onClick={async () => isPlaying ? await pause() : await play()}>{!isPlaying ? <Play size={128}/> : <Pause size={128}/>}</button>
         )
     } else {
-        return undefined;
+        return <div></div>;
     }
 
 }

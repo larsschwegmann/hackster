@@ -97,7 +97,7 @@ export default function SpotifyWebPlayer({
             </div>
         )
     } else {
-        return <div></div>;
+        return undefined;
     }
     
 }
