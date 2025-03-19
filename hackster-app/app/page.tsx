@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { ScanQrCode } from "lucide-react";
 import { Device } from "@spotify/web-api-ts-sdk";
 import QRScanner from "@/components/ui/QRScanner";
+import SpotifyConnectPlayer from "@/components/SpotifyConnectPlayer";
 
 export default function Home() {
 
@@ -47,9 +48,10 @@ export default function Home() {
     function onDataScan(data: string)  {
         setScanning(false);
         decodeQRData(data).then(async (spotifyURI) => {
-            console.log("Found QR track: ", spotifyURI);
-            if (selectedPlaybackDevice && spotifyURI) {
-                await sdk.player.startResumePlayback(selectedPlaybackDevice.id!, undefined, [spotifyURI]);
+            const trimmedSpotifyURI = spotifyURI?.trim();
+            console.log("Found QR track: ", trimmedSpotifyURI);
+            if (selectedPlaybackDevice && trimmedSpotifyURI) {
+                await sdk.player.startResumePlayback(selectedPlaybackDevice.id!, undefined, [trimmedSpotifyURI]);
             }
         });
     }
@@ -63,11 +65,12 @@ export default function Home() {
     return (
         <div className="grid grid-cols-1 gap-4">
             { isScanning ? <div><QRScanner onDataScan={onDataScan} onCancel={() => setScanning(false)}/></div> : null}
-            <SpotifyWebPlayer setDeviceId={setWebPlayerDeviceId} hideUI={isScanning} setSpotifyPlayer={setPlayer} />
+            <SpotifyWebPlayer setDeviceId={setWebPlayerDeviceId} hideUI={isScanning || webPlayerDeviceId !== selectedPlaybackDevice?.id} setSpotifyPlayer={setPlayer} />
+            <SpotifyConnectPlayer hideUI={isScanning || webPlayerDeviceId === selectedPlaybackDevice?.id} spotifyDeviceId={selectedPlaybackDevice?.id ?? ""} />
             { !isScanning ? <button className="btn btn-lg btn-primary mt-5" onClick={openScanner}><ScanQrCode /> Scan New Track</button> : null }
             <div>
                 <span className="mr-3">Playback Device:</span>
-                <select className="select select-bordered select-sm" value={webPlayerDeviceId} onChange={(e) => setWebPlayerDeviceId(e.target.value)}>
+                <select className="select select-bordered select-sm" value={selectedPlaybackDevice?.id ?? undefined} onChange={(e) => setSelectedPlaybackDevice(availablePlaybackDevices.find((d) => d.id === e.target.value))}>
                     {availablePlaybackDevices.map(device => (
                         <option key={device.id} value={device.id?.toString()}>{device.name} {device.id === webPlayerDeviceId ? "(This Browser)" : null}</option>
                     ))}
