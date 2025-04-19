@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Hackster Game
 
-## Getting Started
+This project is a NextJS-based reimplementation of the companion app of the [HITSTER board game](https://hitstergame.com/).
+The original app signed me out of the Spotify session multiple times per game, so I decided to reimplement the app with additional features in my browser.
 
-First, run the development server:
+Added features:
+- Create custom printable card sheets based on your own Spotify playlists
+- Playback on any Spotify connect device in your account
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Unfortunately, I cannot make a hosted version of this available publicly due to the [terms and conditions of the Spotify API](https://developer.spotify.com/policy#iii-some-prohibited-applications), which disallow Music Trivia games.
+I have no idea how the HITSTER team got around that.
+This application is for personal use and educational purposes only.
+
+## Prerequisites
+
+In order to run this, you will need a `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET`, which you can obtain from the [Spotify Developer console](https://developer.spotify.com/).
+You will also net to set `NEXAUTH_SECRET` and `NEXTAUTH_URL`.
+You can supply these via environemnt variables or a `.env` file:
+
+```
+SPOTIFY_CLIENT_ID="1234567890"
+SPOTIFY_CLIENT_SECRET="abcdefghijk"
+NEXTAUTH_SECRET="random_string_for_nextauth"
+NEXTAUTH_URL="https://<yourip>:3000"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The app needs to be hosted via https for the in-browser spotify player to work, as it requires browser DRM.
+The next dev environment sets up an https server automatically.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Building & Running
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This is a pretty standard NextJS project. Run `npm i`, then run `npm run dev` for the dev environment and `npm run build` for the production build.
+ 
+## License
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project [is released under the Creative-Commons CC-BY-NC 4.0 License](LICENSE) for the reasons stated above.
